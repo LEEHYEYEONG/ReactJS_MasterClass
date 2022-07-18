@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Switch, Route, useLocation, useParams, useRouteMatch } from "react-router";
+import { Switch, Route, useLocation, useParams, useRouteMatch, useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
@@ -74,6 +74,17 @@ const Tab = styled.span<{isActive:boolean}>`
     display: block;
   }
 `;
+
+const Button = styled.button`
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: ${props => props.theme.textColor};
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+`;
+
 
 interface RouteParams {
   coinId: string;
@@ -151,21 +162,7 @@ function Coin() {
     refetchInterval: 5000,
   });
 
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<InfoData>();
-  // const [priceInfo, setPriceInfo] = useState<PriceData>();
-  
-  // useEffect(() => {
-  //   (async() => {
-  //     const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //     ).json();
-  //     const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //     ).json();
-  //     setInfo(infoData);
-  //     setPriceInfo(priceData);
-  //     setLoading(false);
-  //   })();
-  // }, [coinId]);
+  let history = useHistory();
 
   const loading = infoLoading || tickersLoading;
   
@@ -196,7 +193,7 @@ function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>Price:</span>
-              <span>{tickersData?.quotes.USD.price.toFixed(2)}</span>
+              <span>${tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -222,7 +219,7 @@ function Coin() {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId = {coinId}/>
             </Route>
             <Route path={`/:coinId/chart`}>
               <Chart coinId = {coinId} />
@@ -230,6 +227,9 @@ function Coin() {
           </Switch>
       </>
     )}
+    <Button onClick={ ()=> {
+          history.push('/');
+        } }>Go Home</Button>
   </Container>
   );
 }

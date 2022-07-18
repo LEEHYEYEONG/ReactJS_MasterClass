@@ -28,55 +28,56 @@ function Chart({ coinId }: ChartProps) {
       "Loading chart..."
     ) : ( 
     <ApexChart 
-      type="line"
-      series={[
-        {
-          name: "Price",
-          data: data?.map((price) => price.close) as number [],
+    type="candlestick"
+    series={[
+      {
+        data: data?.map((price) => {
+        return{
+          x: price.time_close,
+          y: [price.open.toFixed(2), price.high.toFixed(2), price.low.toFixed(3), price.close.toFixed(3)]
+            }
+          })
         },
-      ]}
-      options={{
-        theme: {
-          mode: "dark",
+      ] as unknown as number[]}
+    options={{
+      theme: {
+        mode: "dark",
+      },
+      chart: {
+        type: "candlestick",
+        height: 350,
+        width: 500,
+        toolbar: {
+          show:false,
         },
-        chart: {
-          height:  500,
-          width: 500,
-          toolbar: {
-            show: false,
-          },
-          background: "transparent",
-        },
-        grid: {
-          show: false,
-        },
-        stroke: {
-          curve: "smooth",
-          width: 3,
-        },
-        yaxis: {
-          show: false,
-        },
-        xaxis: {
-          axisBorder: {show: false },
-          axisTicks: {show: false },
-          labels: {show: false, datetimeFormatter: {month: "mmm 'yy"} },
-          type: "datetime",
-          categories: data?.map((price) => price.time_close)
-        },
-        fill: {
-          type: "gradient",
-          gradient: {gradientToColors: ["#0be881"], stops: [0, 100]} 
-        },
-        colors: ["#0fbcf9"],
-        tooltip: {
-          y: {
-            formatter: (value) => `$${value.toFixed(3)}`
+        background: "transparent",
+      },
+      stroke: {
+        curve: "smooth",
+        width: 2,
+      },
+      yaxis: {
+        show: false,
+      },
+      xaxis: {
+        type: "datetime",
+        categories: data?.map((price) => price.time_close),
+        labels: {
+          style: {
+            colors: "#f5f6fa"
           }
         }
-        
-      }}
-      />
+      },
+      plotOptions: {
+        candlestick: {
+          colors: {
+            upward: "#0be881",
+            downward: "#0fbcf9"
+          }
+        }
+      }
+    }}
+  />
       )}
     </div>;
 }
