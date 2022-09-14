@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { RecoilRoot } from 'recoil';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import App from './App';
-import { darkTheme } from './theme';
+import React from "react";
+import ReactDOM from "react-dom";
+import { RecoilRoot } from "recoil";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
+import App from "./App";
+import { darkTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -62,7 +62,7 @@ table {
 body {
   font-family: 'Source Sans Pro', sans-serif;
   background-color: ${(props) => props.theme.bgColor};
-  color: ${(props) => props.theme.textColor};
+  color: black;
   line-height: 1.2;
 }
 a {
@@ -75,10 +75,10 @@ ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <ThemeProvider theme={darkTheme}>
-       <GlobalStyle />
+        <GlobalStyle />
         <App />
       </ThemeProvider>
     </RecoilRoot>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
