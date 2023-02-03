@@ -53,11 +53,17 @@ const Row = styled(motion.div)`
 
 const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-color: white;
-  background-image:url(${props => props.bgPhoto});
+  background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
   height: 200px;
   font-size: 66px;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `;
 
 const rowVariants = {
@@ -69,6 +75,17 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth - 5,
+  },
+};
+
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: { delay: 0.5, duration: 0.3, type: "tween" },
   },
 };
 
@@ -121,6 +138,10 @@ function Home() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
+                      whileHover="hover"
+                      initial="normal"
+                      transition={{ type: "tween" }}
+                      variants={boxVariants}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                     />
                   ))}
