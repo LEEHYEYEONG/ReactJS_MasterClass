@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { IGetSearchMovies, IGetSearchTv, searchMovie } from "../api";
-import SearchTv from "../Components/SearchTv";
+import { IGetSearchMovies, IGetSearchTv, searchMovie, searchTv } from "../api";
 import { makeImagePath } from "../utils";
 
 const Loader = styled.div`
@@ -20,7 +19,7 @@ const Wrapper = styled.div`
 
 const Slider = styled.div`
   position: relative;
-  top: 100px;
+  top: 300px;
 `;
 
 const Row = styled(motion.div)`
@@ -66,6 +65,7 @@ const SmallBox = styled.div`
   flex-direction: row;
   margin-bottom: 120px;
   position: relative;
+  top: 500px;
 `;
 
 const SmallTitle = styled.h3`
@@ -110,78 +110,75 @@ const infoVariants = {
 
 const offset = 6;
 
-function Search() {
+function SearchTv() {
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
   console.log(keyword);
 
 
   const useMultipleQuery = () => {
-    const movies = useQuery<IGetSearchMovies>(["movies", keyword], () => searchMovie(keyword ?? "none")
-    );
-    //const tv = useQuery<IGetSearchTv>(["tv", keyword], () => searchMovie(keyword ?? "none"));
-    return [movies]; 
+    const tv = useQuery<IGetSearchTv>(["tv", keyword], () => searchTv(keyword ?? "none"));
+    return [tv]; 
   };
 
 const [
-  {isLoading: loadingMovies, data:movies},
+  {isLoading: loadingTv, data:tv},
 ] = useMultipleQuery(); 
 
-const [moviesIndex, setMoviesIndex] = useState(0);
-const [movieLeaving, setMovieLeaving] = useState(false);
-const toggleMoviesLeaving = () => setMovieLeaving((prev) => !prev);
-const increaseMoviesIndex = () => {
-  if (movies) {
-    if (movieLeaving) return;
-    toggleMoviesLeaving();
-    const totalMovies = movies.results.length - 1;
-    const maxIndex = Math.floor(totalMovies / offset) - 1;
-    setMoviesIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+const [tvIndex, setTvIndex] = useState(0);
+const [tvLeaving, setTvLeaving] = useState(false);
+const toggleTvLeaving = () => setTvLeaving((prev) => !prev);
+const increaseTvIndex = () => {
+  if (tv) {
+    if (tvLeaving) return;
+    toggleTvLeaving();
+    const totalTv = tv.results.length - 1;
+    const maxIndex = Math.floor(totalTv / offset) - 1;
+    setTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
   }
 };
 
   return(
     <Wrapper>
-    {loadingMovies ? (
+    {loadingTv ? (
       <Loader>Loading...</Loader>
     ) : (
       <>
-        <SmallBox style={{top: 200}}>
-          <SmallTitle>Movies Results</SmallTitle>
-          <Btn  onClick={increaseMoviesIndex}>Next</Btn>
+        <SmallBox style={{top: 400}}>
+          <SmallTitle >Tv Results</SmallTitle>
+          <Btn  onClick={increaseTvIndex }>Next</Btn>
         </SmallBox>
         <Slider>
-          <AnimatePresence initial={false} onExitComplete={toggleMoviesLeaving}>
+          <AnimatePresence initial={false} onExitComplete={toggleTvLeaving}>
             <Row
               variants={rowVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
               transition={{ type: "tween", duration: 1 }}
-              key={moviesIndex}
+              key={tvIndex}
             >
-              {movies?.results
+              {tv?.results
                 
-                .slice(offset * moviesIndex, offset * moviesIndex + offset)
-                .map((movie) => (
+                .slice(offset * tvIndex, offset * tvIndex + offset)
+                .map((tv) => (
                   <Box
-                    layoutId={movie.id + ""}
-                    key={movie.id}
+                    layoutId={tv.id + ""}
+                    key={tv.id}
                     whileHover="hover"
                     initial="normal"
                     transition={{ type: "tween" }}
                     variants={boxVariants}
-                    bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                    bgPhoto={makeImagePath(tv.backdrop_path, "w500")}
                   >
                     <Info variants={infoVariants}>
-                      <h4>{movie.title}</h4>
+                      <h4>{tv.name}</h4>
                     </Info>
                   </Box>
                 ))}
             </Row>
           </AnimatePresence>
         </Slider>
-        <SearchTv/>
       </>
     )}
   </Wrapper>
@@ -190,4 +187,4 @@ const increaseMoviesIndex = () => {
   
       
 }
-export default Search;
+export default SearchTv;
